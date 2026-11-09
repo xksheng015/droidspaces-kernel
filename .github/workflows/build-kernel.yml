@@ -1,4 +1,4 @@
-name: Build Kernel
+﻿name: Build Kernel
 
 on:
   workflow_dispatch:
@@ -175,6 +175,12 @@ jobs:
         if: env.KSU_VARIANT != 'none'
         run: bash scripts/kernelsu.sh
 
+      - name: Copy missing Xiaomi private headers
+        run: |
+          KDIR="${WORKSPACE}/android-kernel"
+          mkdir -p "$KDIR/include/linux/mfd"
+          cp -v extras/include/linux/mfd/spk-id.h "$KDIR/include/linux/mfd/spk-id.h"
+
       - name: Apply kernel patches
         run: bash scripts/patches.sh all
 
@@ -278,7 +284,7 @@ jobs:
         uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8 # v2.3.2
         with:
           tag_name: ${{ needs.build.outputs.device }}-${{ needs.build.outputs.build_time }}
-          name: ${{ needs.build.outputs.device }} · ${{ needs.build.outputs.ksu_name }} · ${{ needs.build.outputs.build_time }}
+          name: ${{ needs.build.outputs.device }} 路 ${{ needs.build.outputs.ksu_name }} 路 ${{ needs.build.outputs.build_time }}
           body: |
             | | |
             | --- | --- |
